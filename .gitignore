@@ -1,0 +1,14 @@
+# Meson build files
+builddir/
+
+# Compiled binaries
+*.o
+bcast
+
+# Editor backup files
+*~
+*.swp
+*.swo
+
+# macOS
+.DS_Store

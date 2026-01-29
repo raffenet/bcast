@@ -1,0 +1,2 @@
+option('with_mpi', type : 'string', value : '',
+        description : 'Path to MPI installation directory')
