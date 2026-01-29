@@ -53,6 +53,10 @@ else
   message('Using MPI found by pkg-config/system')
 endif
 
+# Check for tar availability
+tar_prog = find_program('tar', required : true)
+message('Using tar: ' + tar_prog.full_path())
+
 # Executable
 executable('bcast',
   'bcast.c',
