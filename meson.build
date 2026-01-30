@@ -7,7 +7,7 @@ project('bcast', 'c',
 # Get MPI path from option
 mpi_path = get_option('with_mpi')
 
-# Try to find MPI automatically or use user-provided path
+# Try to find MPI using pkg-config/system or user-provided path
 mpi_dep = dependency('mpi', required : false, language : 'c')
 
 if not mpi_dep.found()
@@ -19,33 +19,19 @@ if not mpi_dep.found()
       link_args : ['-L' + mpi_path / 'lib', '-lmpi']
     )
   else
-    # Try common MPI locations
-    common_paths = [
-      '/usr/local',
-      '/usr',
-      '/opt/homebrew/',
-    ]
-    
-    found_mpi = false
-    foreach path : common_paths
-      mpi_header = path + '/include/mpi.h'
-      mpi_lib_so = path + '/lib/libmpi.so'
-      mpi_lib_dylib = path + '/lib/libmpi.dylib'
+    # Try to find mpicc in PATH and use it for MPI detection
+    mpicc = find_program('mpicc', required : false)
+    if mpicc.found()
+      message('Using MPI compiler found in PATH: ' + mpicc.full_path())
+      # Get compiler flags from mpicc
+      cpp_args = run_command(mpicc, '-showme:compile', check : true).stdout().strip()
+      link_args = run_command(mpicc, '-showme:link', check : true).stdout().strip()
       
-      if run_command('test', '-f', mpi_header, check : false).returncode() == 0 and \
-         (run_command('test', '-f', mpi_lib_so, check : false).returncode() == 0 or \
-          run_command('test', '-f', mpi_lib_dylib, check : false).returncode() == 0)
-        message('Found MPI at: ' + path)
-        mpi_dep = declare_dependency(
-          include_directories : include_directories(path + '/include'),
-          link_args : ['-L' + path + '/lib', '-lmpi']
-        )
-        found_mpi = true
-        break
-      endif
-    endforeach
-    
-    if not found_mpi
+      mpi_dep = declare_dependency(
+        compile_args : cpp_args.split(),
+        link_args : link_args.split()
+      )
+    else
       error('MPI not found. Please install MPI or use --with-mpi=<path>')
     endif
   endif
