@@ -32,7 +32,14 @@ def find_mpi_executable():
             return cmd
     return None
 def find_bcast_executable():
-    """Find bcast executable in user PATH."""
+    """Find bcast executable - first check same directory, then PATH."""
+    # First try to find bcast in same directory as this script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    local_bcast = os.path.join(script_dir, "bcast")
+    if os.path.exists(local_bcast):
+        return local_bcast
+
+    # Fallback to PATH
     return shutil.which("bcast")
 def parse_arguments():
     """Parse command line arguments."""
