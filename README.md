@@ -19,6 +19,7 @@ bcast efficiently distributes files and directories across MPI ranks by using MP
 - MPI implementation (MPICH, Open MPI, Intel MPI, etc.)
 - MPI compiler wrapper (mpicc)
 - tar command
+- Python 3.6+ (for Python frontend)
 - POSIX-compliant system
 
 ## Installation
@@ -62,6 +63,37 @@ meson setup builddir -Dwith_mpi=/path/to/mpi/install
 ```
 
 ## Usage
+
+### Python Frontend (Recommended)
+
+```bash
+# Basic usage - broadcast file to /tmp on all nodes
+./bcast.py /path/to/source/file
+
+# Broadcast to specific destination directory
+./bcast.py /path/to/source/file /path/to/destination
+
+# Broadcast file or directory
+./bcast.py /path/to/directory /shared/storage
+
+# Force overwrite without prompting
+./bcast.py --force /path/to/large/dataset /shared/storage
+
+# Force overwrite without prompting
+./bcast.py --force /path/to/source/file /path/to/destination
+
+# Specify custom MPI or bcast executables
+./bcast.py --mpiexec /custom/path/to/mpiexec --bcast /custom/path/to/bcast /path/to/source
+```
+
+The Python frontend provides:
+- **Argument validation** - Checks if source exists
+- **Overwrite protection** - Prompts before overwriting existing destinations
+- **Automatic executable detection** - Finds MPI and bcast executables
+- **Cleaner interface** - Handles MPI details internally
+- **Designed for 1 process per node** - Optimal performance for HPC cluster topology
+
+### Direct MPI Usage
 
 ```bash
 # Basic usage - broadcast file to /tmp on all nodes

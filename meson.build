@@ -64,3 +64,9 @@ executable('bcast',
   install : true,
   install_dir : get_option('bindir')
 )
+
+# Install Python frontend
+install_data('bcast.py',
+  install_dir : get_option('bindir'),
+  install_mode : 'rwxr-xr-x'
+)
