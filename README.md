@@ -27,7 +27,7 @@ bcast efficiently distributes files and directories across MPI ranks by using MP
 ### From Source (Meson)
 
 ```bash
-# Automatic MPI detection (searches common locations)
+# Automatic MPI detection (searches build user's environment)
 meson setup builddir
 ninja -C builddir
 ninja -C builddir install
